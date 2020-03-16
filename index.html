@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Push Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+</head>
+<body>
+
+	<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+
+  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-analytics.js"></script>
+
+   <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-messaging.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+  <h1>Hello</h1>
+   <script>
+  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyCSs7WAHSpB0c9vYmu8xueBFK1L6EEjak4",
+	    authDomain: "test-notifications-6226c.firebaseapp.com",
+	    databaseURL: "https://test-notifications-6226c.firebaseio.com",
+	    projectId: "test-notifications-6226c",
+	    storageBucket: "test-notifications-6226c.appspot.com",
+	    messagingSenderId: "761715641602",
+	    appId: "1:761715641602:web:c2be5242bd2fa0396dc61b",
+	    measurementId: "G-03R37MT50T"
+	  };
+	  // Initialize Firebase
+
+
+
+	  firebase.initializeApp(firebaseConfig);
+	  const messaging = firebase.messaging();
+
+		messaging.requestPermission()
+		  .then(function() {
+		  	console.log('HavePermission');
+        console.log(messaging.getToken())
+
+		  	return messaging.getToken();
+		  })
+		  .then(function(token) {
+
+		  	console.log(token);
+        let xmlhttp = new XMLHttpRequest();
+        let url = "https://localhost:3000/customers";
+        xmlhttp.open("POST", url);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.send(JSON.stringify({ "os": getOS(), "token": token }));
+		  })
+		  .catch(function(err) {
+		  	console.log('Error Occured');
+		  })
+
+		  messaging.onMessage(function(payload) {
+		  	console.log('onMessage: ', payload);
+		  });
+
+		  function getOS() {
+        var userAgent = window.navigator.userAgent,
+            platform = window.navigator.platform,
+            macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+            windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+            iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+            os = null;
+
+            if (macosPlatforms.indexOf(platform) !== -1) {
+              os = 'Mac OS';
+            } else if (iosPlatforms.indexOf(platform) !== -1) {
+              os = 'iOS';
+            } else if (windowsPlatforms.indexOf(platform) !== -1) {
+              os = 'Windows';
+            } else if (/Android/.test(userAgent)) {
+              os = 'Android';
+            } else if (!os && /Linux/.test(platform)) {
+              os = 'Linux';
+            }
+
+        return os;
+      }
+
+      function sendPOSTRequest() {
+        console.log('It is sending')
+        let xmlhttp = new XMLHttpRequest();
+        let url = "https://localhost:3000/customers";
+        xmlhttp.open("POST", url);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.send(JSON.stringify({ "os": "hello@user.com", "token": "asdasd" }));
+      }
+
+
+		
+</script>
+
+<button type="button" onclick="sendPOSTRequest()">Click here to send post request</button>
+
+</body>
+</html>
